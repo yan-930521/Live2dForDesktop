@@ -1,0 +1,129 @@
+#move {
+    display: block;
+    border-radius: 50%;
+    -webkit-app-region: drag;
+    position: absolute;
+    background-image: url("../img/move_hover.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: 3;
+    opacity: 1;
+    -webkit-filter: drop-shadow(0 0 5px rgb(203, 229, 241));
+    filter: drop-shadow(0 0 5px rgb(203, 229, 241));
+}
+
+.ctrl {
+    border-radius: 50%;
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: 3;
+    -webkit-filter: drop-shadow(0 0 5px rgb(203, 229, 241));
+    filter: drop-shadow(0 0 5px rgb(203, 229, 241));
+}
+
+
+#setting {
+    background-image: url("../img/setting.png");
+}
+
+.ctrl:hover,
+.select:hover {
+    background-color: rgb(194, 233, 253);
+    box-shadow: 0 0 5px 5px rgb(194, 233, 253);
+}
+
+@keyframes setting {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#tools {
+    background-image: url("../img/hammer.png");
+    /*From https://pngtree.com/*/
+}
+
+#camera {
+    background-image: url("../img/camera.png");
+}
+
+#magnifier {
+    background-image: url("../img/magnifier.png");
+    overflow: visible;
+}
+
+#close {
+    background-image: url("../img/close-small.png");
+}
+
+#hidden {
+    background-image: url("../img/hidden-small.png");
+}
+
+#append {
+    background-image: url("../img/append.png");
+    background-size: 70%;
+    background-position: center;
+}
+
+#container {
+    bottom: 0;
+    left: 0;
+    line-height: 0;
+    margin-bottom: -10px;
+    position: fixed;
+    transform: translateY(3px);
+    transition: transform .3s ease-in-out, bottom 3s ease-in-out;
+    z-index: 2;
+    /*pointer-events: none;*/
+}
+
+html:hover #setting {
+    display: block;
+}
+
+#container:hover {
+    transform: translateY(0);
+}
+
+#live2d {
+    /*cursor: grab;*/
+    position: relative;
+    z-index: 2;
+}
+
+/*
+交互的輸入框
+*/
+#chat {
+    display: none;
+    position: absolute;
+    height: 30%;
+    width: 90%;
+    bottom: 0;
+    background-color: aquamarine;
+    opacity: 0.5;
+    filter: brightness(150%);
+    z-index: 4;
+}
+
+@keyframes appear {
+    from {
+        bottom: -100%;
+    }
+
+    to {
+        bottom: 0;
+    }
+}
+
+/*
+#live2d:active {
+    cursor: grabbing;
+}
+*/

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        #container {
+            position: absolute;
+            border-radius: 50%;
+            /*background-color: white;*/
+            background-image: url("../img/play.png");
+            background-repeat: no-repeat;
+            background-size: 50%;
+            background-position: center center;
+            -webkit-filter: drop-shadow(0 0 5px rgb(203, 229, 241));
+            filter: drop-shadow(0 0 5px rgb(203, 229, 241));
+        }
+
+        #name {
+            position: relative;
+            text-align: center;
+            top: 50%;
+            color: white;
+            transform: scale(0.9);
+            user-select: none;
+
+
+            text-overflow: ellipsis;
+            overflow: hidden;
+            display: block;
+            white-space: nowrap;
+        }
+
+        #bar {
+            position: absolute;
+            bottom: 0;
+            background: white;
+            -webkit-transition: 0.1s ease all;
+        }
+    </style>
+
+    <script type="text/javascript" src="../js/rythm.min.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script>
+        window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
+        window.onload = () => {
+            const Einfach = require("../json/data.json");
+            const { ipcRenderer } = require("electron");
+
+            let container = document.getElementById("container");
+            container.style.width = Einfach.Setting.MusicWindow.Width + "px";
+            container.style.height = Einfach.Setting.MusicWindow.Height + "px";
+            container.style.top = (Einfach.Setting.MusicWindow.Width / 2) + "px";
+            container.style.left = (Einfach.Setting.MusicWindow.Height / 2) + "px";
+            ipcRenderer.on(Einfach.IpcEvent.MusicData, (e, files) => {
+                ipcRenderer.send(Einfach.IpcEvent.MusicDataGot, true);
+                console.log(files[0])
+                container.onclick = () => {
+                    container.onclick = null;
+                    const rythm = new Rythm();
+                    rythm.setMusic(files[0].path);
+                    rythm.addRythm("name", 'fontSize', 0, 10, { min: 1, max: 1.1 });
+                    document.body.insertAdjacentHTML("beforeend",
+                        `<audio id="music" src="${files[0].path}" autoplay="false"></audio>`
+                    );
+
+                    container.style.backgroundImage = "none";
+                    container.style.webkitAppRegion = "drag";
+                    container.innerHTML = container.innerHTML + `<div id="name" class="name">${files[0].name.replace(".mp3", "")}</div>`;
+
+                    files.shift();
+
+                    let ctx = new AudioContext();
+                    let audio = document.getElementById("music");
+                    let audioSrc = ctx.createMediaElementSource(audio);
+                    let analyser = ctx.createAnalyser();
+
+                    audioSrc.connect(analyser);
+
+                    analyser.connect(ctx.destination);
+
+                    analyser.fftSize = 64;
+
+                    let frequencyData = new Uint8Array(analyser.frequencyBinCount);
+
+                    let twoPi = 2 * Math.PI;
+                    let count = analyser.frequencyBinCount;
+                    let radius = Einfach.Setting.MusicWindow.Width / 2;
+                    let bars = [];
+                    let center = Einfach.Setting.MusicWindow.Width / 2;
+                    let max = 256;
+
+
+
+                    let change = twoPi / count;
+                    for (let i = 0; i < twoPi; i += change) {
+                        let node = document.createElement('div');
+                        node.style.height = (radius / 10) + 'px';
+                        node.style.width = (radius * twoPi / (count * 2)) + 'px';
+                        node.style.borderRadius = (radius * twoPi / (count)) + 'px';
+                        node.style.left = (center + radius * Math.cos(i)) + 'px';
+                        node.style.top = (center + radius * Math.sin(i)) + 'px';
+                        node.style.webkitTransform = node.style.mozTransform = node.style.transform = 'rotate(' + (i - (Math.PI / 2)) + 'rad)';
+                        node.style.webkitTransformOrigin = node.style.mozTransformOrigin = node.style.transformOrigin = '0px 0px';
+                        node.id = "bar";
+                        bars.push(node);
+                        container.appendChild(node);
+                    }
+
+                    const renderFrame = () => {
+                        analyser.getByteFrequencyData(frequencyData);
+                        for (let i = 0; i < bars.length; i++) {
+                            let bar = bars[i];
+                            bar.style.height = ((frequencyData[i] / max) * radius) + 'px';
+                        }
+                        // if (musicEnd) return;
+                        requestAnimationFrame(renderFrame);
+                    }
+
+                    audio.play();
+                    rythm.start();
+
+                    audio.onended = () => {
+                        console.log(files)
+                        if (files.length > 0) {
+                            audio.src = files[0].path;
+                            files.shift();
+                            const rythm = new Rythm();
+                            rythm.setMusic(audio.src);
+                            rythm.addRythm("name", 'fontSize', 0, 10, { min: 1, max: 1.1 });
+                            audio.onplay = () => {
+                                rythm.start();
+                            }
+                            audio.play();
+                        } else {
+                            ipcRenderer.send(Einfach.IpcEvent.Close, Einfach.Setting.List["MusicWindow"]);
+                        }
+                    }
+
+                    renderFrame();
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

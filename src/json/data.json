@@ -1,0 +1,89 @@
+{
+    "ResourcePath": "../models/",
+    "Model": {
+        "Default": {
+            "FileName": "Hiyori/Hiyori.model3.json",
+            "Canvas": {
+                "Id": "live2d",
+                "Width": 250,
+                "Height": 350
+            },
+            "Scale": 0.1,
+            "Motions": "",
+            "NewVersion": false
+        },
+        "Hiyori": {
+            "FileName": "Hiyori/Hiyori.model3.json",
+            "Canvas": {
+                "Id": "live2d",
+                "Width": 250,
+                "Height": 350
+            },
+            "Scale": 0.09,
+            "Motions": "Idle",
+            "NewVersion": true
+        },
+        "Asuna": {
+            "FileName": "asuna_01/asuna_01.model.json",
+            "Canvas": {
+                "Id": "live2d",
+                "Width": 250,
+                "Height": 350
+            },
+            "Scale": 0.1,
+            "Motions": "",
+            "NewVersion": false
+        }
+    },
+    "Setting": {
+        "MoveImg": {
+            "Width": 30,
+            "Height": 30
+        },
+        "MusicWindow": {
+            "Width": 300,
+            "Height": 300
+        },
+        "MainWindow": {
+            "Width": 250,
+            "Height": 350
+        },
+        "SettingWindow": {
+            "Width": 400,
+            "Height": 400
+        },
+        "List": {
+            "MainWindow": "main-window",
+            "SettingWindow": "setting-window",
+            "MusicWindow": "music-window"
+        },
+        "App": {
+            "ModelScale": {
+                "Name": "模型放大率",
+                "Value": 2
+            }
+        }
+    },
+    "Error": {
+        "Clm": "請將 clmtrackr 的程式碼放在liv2d前導入",
+        "Gl": "無法初始化 WebGL",
+        "Camera": "無法初始化 User Media",
+        "Model_not_found": "model data 不存在",
+        "Video_not_found": "#video 不存在"
+    },
+    "Brfv5": {
+        "LibraryName": "brfv5_js_tk261120_v5.2.1_trial.brfv5",
+        "AppId": "brfv5.browser.minimal.nomodules",
+        "ModelName": "68l",
+        "NumChunksToLoad": 8,
+        "PathToModels": "../brfv5-browser/js/brfv5/models/"
+    },
+    "IpcEvent": {
+        "Close": "close",
+        "Append": "append",
+        "Hidden": "hidden",
+        "MusicStart": "music-start",
+        "MusicData": "music-data",
+        "MusicDataGot": "music-data-got"
+    }
+}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        #top {
+            -webkit-app-region: drag;
+            position: absolute;
+            height: 15%;
+            width: 95%;
+            border-radius: 16px 16px 0 0;
+            top: -3%;
+        }
+
+        .ctrl {
+            -webkit-app-region: none;
+            -webkit-filter: drop-shadow(0 0 5px rgb(203, 229, 241));
+            filter: drop-shadow(0 0 5px rgb(203, 229, 241));
+            background-repeat: no-repeat;
+            background-size: contain;
+            position: absolute;
+            width: 10%;
+            height: 50%;
+            top: 33%;
+            z-index: 3;
+            opacity: 0.5;
+        }
+
+        .ctrl:hover {
+            opacity: 1;
+        }
+
+        #close {
+            right: 0;
+            background-image: url("../img/close.png");
+            transform: scale(70%);
+        }
+
+        #hidden {
+            right: 20%;
+            background-image: url("../img/hidden.png");
+            transform: scale(70%);
+        }
+
+        #background {
+            position: absolute;
+            width: 95%;
+            height: 80%;
+            border-radius: 0 0 16px 16px;
+            background-color: white;
+            bottom: 5%;
+            -webkit-filter: brightness(150%);
+            filter: brightness(150%);
+            box-shadow: 0 0 5px 5px rgb(203, 229, 241);
+            /*antiquewhite*/
+            overflow-y: auto;
+            opacity: 0.3;
+        }
+
+        #container {
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            color: rgb(194, 233, 253);
+            -webkit-filter: drop-shadow(0 0 5px rgb(203, 229, 241));
+            filter: drop-shadow(0 0 5px rgb(203, 229, 241));
+
+            font-family: fantasy;
+            font-size: 200%;
+            width: 80%;
+        }
+
+        .set {
+            position: relative;
+            height: 10%;
+            width: 100%;
+            filter: brightness(100%);
+            display: inline-flex;
+        }
+
+        .name {
+            left: 10%;
+        }
+
+        .data {
+            right: 0;
+            min-width: 20px;
+            position: absolute;
+            box-shadow: 0px 4px rgb(203, 229, 241);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="top">
+        <div id="close" class="ctrl"></div>
+        <div id="hidden" class="ctrl"></div>
+    </div>
+    <div id="background">
+    </div>
+    <div id="container">
+    </div>
+    <script>
+        const Einfach = require("../json/data.json");
+        const DB = require("../js/DB.js");
+        const { ipcRenderer } = require("electron");
+        const close = document.getElementById("close");
+        const hidden = document.getElementById("hidden");
+        const container = document.getElementById("container");
+
+        const db = new DB();
+
+        const onDataChange = (id) => {
+            let data = document.getElementById(`${id}`);
+            if (data.innerHTML.length > 5) data.innerHTML = "";
+            db.set(id, data.innerHTML);
+        }
+
+        close.onclick = () => {
+            ipcRenderer.send(Einfach.IpcEvent.Close, Einfach.Setting.List["SettingWindow"]);
+        }
+
+        hidden.onclick = () => {
+            ipcRenderer.send(Einfach.IpcEvent.Hidden, Einfach.Setting.List["SettingWindow"]);
+        }
+
+        window.onload = () => {
+            const setHTML = `
+                <div class="set">
+                    <div class="name">&name</div>
+                    <div class="data" id="&num" contenteditable="true" oninput="onDataChange(&num)">&data</div>
+                </div>`;
+
+            let sh = "";
+
+            for (let i in Einfach.Setting.App) {
+                let s = Einfach.Setting.App[i];
+                sh += setHTML.replace("&name", s.Name)
+                    .replace("&data", s.Value)
+                    .replace("&num", i)
+                    .replace("&num", i);
+                n++;
+            }
+
+            container.innerHTML = sh;
+        }
+    </script>
+</body>
+
+</html>
